@@ -1,0 +1,31 @@
+Do you want to cheat?
+Which car do you want to relocate (1 for car1 and 2 for car2)
+Enter new loaction of car 2
+Position of car1 is 2
+Position of car2 is 1
+
+Position of car1 is 7
+Position of car2 is 4
+
+Position of car1 is 8
+Position of car2 is 13
+
+Position of car1 is 17
+Position of car2 is 17
+
+Position of car1 is 24
+Position of car2 is 27
+
+Position of car1 is 27
+Position of car2 is 80
+
+Position of car1 is 30
+Position of car2 is 84
+
+Position of car1 is 40
+Position of car2 is 93
+
+Position of car1 is 41
+Position of car2 is 97
+
+Car 2 is the winner

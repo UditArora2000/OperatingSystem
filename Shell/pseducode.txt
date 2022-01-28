@@ -1,0 +1,170 @@
+PSEUDOCODE:
+
+main() {
+	
+	char cmd[1000];
+	while(1) {
+		save filedescriptor 0 in stdin
+		save filedescriptor 1 in stdout
+		save filedescriptor 2 in stderr
+		print $
+		many initializations to nulls and zeroes
+		remove the spaces in the beginning of the command
+		add one extra space to the end of the command
+		check if the command has pipes
+		if( pipes not present ) {
+			while(i<length(cmd)) {
+				if cmd is exit then exit
+
+				else if cmd has 1>filename then get filename, close(1) and open file
+
+				else if cmd has '2' {
+					if 2>filename then get filename, close(2) and open the file
+
+					if 2>&1 then close(2) and dup(1); 
+				}
+
+				else if cmd has '>' {
+					save the previous argument if not already saved
+					close(1) and open file not in append mode
+				}
+
+				else if cmd has ">>" {
+					save the previous argument if not already saved close(1) and open file in append mode
+				}
+
+				else if cmd has '<' {
+					save the previous argument if not already saved close(0) and open file in read mode
+				}
+
+				else if cmd has ' ' {
+					remove extra sapces
+					save the previous argument
+				}
+
+				else {
+					increase end by one
+				}
+
+				i+=1
+			}
+		}
+
+		else {
+			while(i<length(cmd)) {
+				if cmd is exit then exit
+
+				else if cmd has 1>filename then save filename and existence of output file in write mode
+
+				else if cmd has '2' {
+					if 2>filename then save the file and existence of file
+
+					if 2>&1 then stderr_to_out=1
+				}
+
+				else if cmd has '|' {
+					save the previos argument if not already saved and make initializations for the next command in the pipe
+				}
+
+				else if cmd has '>' {
+					save the previous argument if not already saved and save the file and existence of output file in write mode
+				}
+
+				else if cmd has ">>" {
+					save the previous argument if not already saved and save the file and existence of output file in append mode
+				}
+
+				else if cmd has '<' {
+					save the previous argument if not already saved and save the file and existence of input file
+				}
+
+				else if cmd has ' ' {
+					save the previous arguments if not already saved
+					remove extra sapces
+				}
+
+				else {
+					increase end by one
+				}
+
+				i+=1 
+			}
+		}
+
+		if(pipe present) {
+			make (numbere_of_pipes X 2) array of pipes as fd
+			i=0
+			while(i<number of pipes+1) {
+				pipe(fd[i])
+				make a child process and save return of fork in pid
+				if(pid==0) {
+					close(fd[i][0]) that is close the read end of the pipe
+					if(not last command) {
+						close(1);
+						dup(fd[i][1]) that is output of the execution should be the input to the pipe
+					}
+					if(input file exists) {
+						close(0)
+						open the corresponding input file
+					}
+					if(output file exists in write mode) {
+						close(1)
+						open the corresponding output file in write mode
+					}
+
+					else if(output file exists in append mode) {
+						close(1)
+						open the corresponding output file in append mode
+					}
+
+					else if(2>filename or 2>&1 is the command) {
+						if(2>filename) {								close(2)
+							open the corresponding output file in write mode
+						}
+						else {
+							close(2)
+							dup(1)
+						}
+					}
+
+					close(fd[i][1])
+					execute the command
+					print error if you reach here
+				}
+				else if(pid>0) {
+					wait for the child thread to complete
+					close(fd[i][1]) that is close the write end of the pipe
+					close(0)
+					dup(fd[i][0]) that is read from the read end of the pipe for the next command
+					if(last command) {
+						restore the saved stdin
+					}
+					close(fd[i][0])
+				}
+				else {
+					print failed to create a child process ie fork
+				}
+				i+=1
+			}
+		}
+
+		else {
+			NULL all the empty arguments made
+			make a child process and save return of fork in pid
+			if(pid==0) {
+				execute the command
+				print error if you reach here
+			}
+			else if(pid>0) {
+				wait for the child thread to complete
+			}
+			else {
+				print failed to create a child process ie fork
+			}
+		}
+
+		restore stderr
+		restore stdout
+		restore stdin
+	}
+}
